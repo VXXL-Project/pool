@@ -9,6 +9,39 @@ var myCoin = {
 console.log(process.env);
 var Stratum = require('stratum-pool');
 
+var ports = {};
+ports[process.env.DAEMON_DIFF1_PORT]= { //A port for your miners to connect to
+            "diff": 200000, //the pool difficulty for this port
+
+            /* Variable difficulty is a feature that will automatically adjust difficulty for
+               individual miners based on their hashrate in order to lower networking overhead */
+            "varDiff": {
+                "minDiff": 30000, //Minimum difficulty
+                "maxDiff": 100000000, //Network difficulty will be used if it is lower than this
+                "targetTime": 15, //Try to get 1 share per this many seconds
+                "retargetTime": 90, //Check to see if we should retarget every this many seconds
+                "variancePercent": 30 //Allow time to very this % from target without retargeting
+            }
+        };
+
+ports[process.env.DAEMON_DIFF2_PORT]={ //A port for your miners to connect to
+            "diff": 10000000, //the pool difficulty for this port
+
+            /* Variable difficulty is a feature that will automatically adjust difficulty for
+               individual miners based on their hashrate in order to lower networking overhead */
+            "varDiff": {
+                "minDiff": 30000, //Minimum difficulty
+                "maxDiff": 100000000, //Network difficulty will be used if it is lower than this
+                "targetTime": 15, //Try to get 1 share per this many seconds
+                "retargetTime": 90, //Check to see if we should retarget every this many seconds
+                "variancePercent": 30 //Allow time to very this % from target without retargeting
+            }
+        };
+
+ports[process.env.DAEMON_DIFF3_PORT]={ //Another port for your miners to connect to, this port does not use varDiff
+            "diff": 256 //The pool difficulty
+        };
+
 var pool = Stratum.createPool({
 
     "coin": myCoin,
@@ -61,38 +94,7 @@ var pool = Stratum.createPool({
     /* Each pool can have as many ports for your miners to connect to as you wish. Each port can
        be configured to use its own pool difficulty and variable difficulty settings. varDiff is
        optional and will only be used for the ports you configure it for. */
-    "ports": {
-        "4032": { //A port for your miners to connect to
-            "diff": 200000, //the pool difficulty for this port
-
-            /* Variable difficulty is a feature that will automatically adjust difficulty for
-               individual miners based on their hashrate in order to lower networking overhead */
-            "varDiff": {
-                "minDiff": 30000, //Minimum difficulty
-                "maxDiff": 100000000, //Network difficulty will be used if it is lower than this
-                "targetTime": 15, //Try to get 1 share per this many seconds
-                "retargetTime": 90, //Check to see if we should retarget every this many seconds
-                "variancePercent": 30 //Allow time to very this % from target without retargeting
-            }
-        },
-	"4033": { //A port for your miners to connect to
-            "diff": 10000000, //the pool difficulty for this port
-
-            /* Variable difficulty is a feature that will automatically adjust difficulty for
-               individual miners based on their hashrate in order to lower networking overhead */
-            "varDiff": {
-                "minDiff": 30000, //Minimum difficulty
-                "maxDiff": 100000000, //Network difficulty will be used if it is lower than this
-                "targetTime": 15, //Try to get 1 share per this many seconds
-                "retargetTime": 90, //Check to see if we should retarget every this many seconds
-                "variancePercent": 30 //Allow time to very this % from target without retargeting
-            }
-        },
-
-        "4256": { //Another port for your miners to connect to, this port does not use varDiff
-            "diff": 256 //The pool difficulty
-        }
-    },
+    "ports": ports,
 
 
     /* Recommended to have at least two daemon instances running in case one drops out-of-sync
