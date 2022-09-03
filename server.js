@@ -1,3 +1,4 @@
+require('dotenv').config();
 var myCoin = {
     "name": "VXXL",
     "symbol": "VXXL",
@@ -5,7 +6,7 @@ var myCoin = {
     "txMessages": false, //or true (not required, defaults to false)
     "reward": "POS"
 };
-
+console.log(process.env);
 var Stratum = require('stratum-pool');
 
 var pool = Stratum.createPool({
